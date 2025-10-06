@@ -1,14 +1,8 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import InteractiveMap from './MapObject'
+import "./App.css";
+import { KremlinMap } from "./KremlinMap";
 
 function App() {
-
-  return (
-   <InteractiveMap />
-  )
+  return <KremlinMap />;
 }
 
-export default App
+export default App;

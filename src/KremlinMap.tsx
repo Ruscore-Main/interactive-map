@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState, type JSX } from "react";
+import { useRef, useState } from "react";
 import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-import KulSharif from "./assets/kul-sharif.svg?react";
-import Wall from "./assets/wall.svg?react";
+// import KulSharif from "./assets/kul-sharif.svg?react";
+// import Wall from "./assets/wall.svg?react";
 
 type MapObject = {
   id: number;
@@ -18,25 +18,70 @@ const mapObjects: MapObject[] = [
   {
     id: 1,
     name: "Кул Шариф",
-    top: 175,
-    left: 599,
-    width: 101,
+    top: 22.3,
+    left: 49.255,
+    width: 8.35,
     category: "museum",
     src: "map-objects/kul-sharif.webp",
   },
   {
     id: 2,
     name: "Нижняя стена",
-    top: 456,
-    left: 394,
-    width: 279,
+    top: 58.1,
+    left: 32.6,
+    width: 22.6,
     category: "wall",
-    src: "map-objects/wall.png",
+    src: "map-objects/bottom-wall.webp",
+  },
+  {
+    id: 3,
+    name: "Вход",
+    top: 45.7,
+    left: 86.6,
+    width: 5.1,
+    category: "entrance",
+    src: "map-objects/entrance.webp",
+  },
+  {
+    id: 4,
+    name: "Церковь 1",
+    top: 53.26,
+    left: 62.43,
+    width: 7.2,
+    category: "church",
+    src: "map-objects/church-1.webp",
+  },
+  {
+    id: 5,
+    name: "Церковь 2",
+    top: 54.9,
+    left: 77.66,
+    width: 4.3,
+    category: "church",
+    src: "map-objects/church-2.webp",
+  },
+  {
+    id: 6,
+    name: "Музей 1",
+    top: 37,
+    left: 34,
+    width: 4.1,
+    category: "museum",
+    src: "map-objects/museum-1.webp",
+  },
+  {
+    id: 7,
+    name: "Выход",
+    top: 39.24,
+    left: 11.11,
+    width: 5.73,
+    category: "entrance",
+    src: "map-objects/exit.webp",
   },
 ];
 
 export const KremlinMap = () => {
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [__, setActiveId] = useState<number | null>(null);
   const [hovered, setHovered] = useState<MapObject | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
   const [_, setPopupVisible] = useState(false);
@@ -51,16 +96,17 @@ export const KremlinMap = () => {
   const handleSelectObject = (obj: MapObject) => {
     setActiveId(obj.id);
     setPopupVisible(true);
-
     if (!transformRef.current || !contentRef.current) return;
 
     const zoom = 3;
     const content = contentRef.current;
+    if (!content) return;
+
     const contentWidth = content.offsetWidth;
     const contentHeight = content.offsetHeight;
 
-    const x = obj.left;
-    const y = obj.top;
+    const x = (obj.left / 100) * contentWidth;
+    const y = (obj.top / 100) * contentHeight;
 
     transformRef.current.setTransform(
       contentWidth / 2 - x * zoom,
@@ -71,7 +117,7 @@ export const KremlinMap = () => {
   };
 
   return (
-    <>
+    <div className="max-w-[1500px] mx-auto">
       <div className="flex gap-10 mb-10">
         <div className="w-1/4">
           <h2 className="text-lg font-semibold">Фильтры</h2>
@@ -98,7 +144,7 @@ export const KremlinMap = () => {
                 filter === "entrance" ? "bg-blue-600" : "bg-gray-700"
               }`}
             >
-              Входы
+              Входы/выходы
             </button>
             <button
               onClick={() => setFilter("wall")}
@@ -107,6 +153,14 @@ export const KremlinMap = () => {
               }`}
             >
               Стены
+            </button>
+            <button
+              onClick={() => setFilter("church")}
+              className={`px-3 py-2 rounded ${
+                filter === "church" ? "bg-blue-600" : "bg-gray-700"
+              }`}
+            >
+              Церкви
             </button>
           </div>
         </div>
@@ -129,10 +183,38 @@ export const KremlinMap = () => {
       <TransformWrapper ref={transformRef} maxScale={3} minScale={0.9}>
         {({ zoomIn, zoomOut, resetTransform }) => (
           <div className="relative mx-auto" ref={contentRef}>
-            <div className="flex flex-col flex-wrap gap-[4px] absolute top-[32px] right-[32px] z-[2]">
-              <button onClick={() => zoomIn()}>+</button>
-              <button onClick={() => zoomOut()}>-</button>
-              <button onClick={() => resetTransform()}>x</button>
+            <div className="flex flex-col gap-[4px] absolute right-[32px] top-[32px] z-[2]">
+              <button onClick={() => zoomIn()}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 48 48"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="48" height="48" rx="24" fill="white" />
+                  <path d="M33 24L15 24" stroke="#404041" />
+                  <path d="M24 33V15" stroke="#404041" />
+                </svg>
+              </button>
+              <button onClick={() => zoomOut()}>
+                <svg
+                  width="48"
+                  height="48"
+                  viewBox="0 0 48 48"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect width="48" height="48" rx="24" fill="white" />
+                  <path d="M33 24L15 24" stroke="#404041" />
+                </svg>
+              </button>
+              <button
+                onClick={() => resetTransform()}
+                className="p-3 bg-[#E32F26] rounded-full"
+              >
+                X
+              </button>
             </div>
             <TransformComponent
               contentStyle={{
@@ -160,14 +242,15 @@ export const KremlinMap = () => {
                       key={obj.id}
                       className="absolute"
                       style={{
-                        top: `${obj.top}px`,
-                        left: `${obj.left}px`,
+                        top: `${obj.top}%`,
+                        left: `${obj.left}%`,
                         transform: "translate(-50%, -50%)",
-                        width: `${obj.width}px`,
+                        width: `${obj.width}%`,
                         zIndex: 10,
                         opacity: isVisible ? 1 : 0,
                         pointerEvents: isVisible ? "auto" : "none",
                         cursor: isVisible ? "pointer" : "default",
+                        transition: "opacity 0.3s ease-in-out",
                       }}
                       onMouseEnter={() => setHovered(obj)}
                       onMouseLeave={() => setHovered(null)}
@@ -182,11 +265,11 @@ export const KremlinMap = () => {
                               transition={{ duration: 0.2 }}
                               className="absolute flex w-full justify-center pointer-events-none z-20 "
                               style={{
-                                top: "-40px",
-                                fontSize: "clamp(6px, 16px)",
+                                top: "-30px",
+                                fontSize: "80%",
                               }}
                             >
-                              <span className="px-1 py-1 bg-black/80 rounded shadow-lg ">
+                              <span className="px-1 py-1 bg-white/80 rounded shadow-lg ">
                                 {hovered.name}
                               </span>
                             </motion.div>
@@ -195,7 +278,7 @@ export const KremlinMap = () => {
                         <img
                           onClick={() => handleSelectObject(obj)}
                           src={obj.src}
-                          className="object-contain duration-500 cursor-pointer"
+                          className="object-contain cursor-pointer"
                         />
                       </div>
                     </div>
@@ -214,6 +297,6 @@ export const KremlinMap = () => {
                     100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
                 }
             `}</style>
-    </>
+    </div>
   );
 };
